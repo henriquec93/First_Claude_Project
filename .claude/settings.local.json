@@ -1,0 +1,48 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "mcp__playwright__*"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /c/Users/henri/Documents/Projects/First_Claude_Project && npm run format 2>&1 | tail -5"
+          },
+          {
+            "type": "command",
+            "command": "cd /c/Users/henri/Documents/Projects/First_Claude_Project && npm run lint 2>&1 | tail -20"
+          },
+          {
+            "type": "agent",
+            "agent": "code-quality-reviewer",
+            "prompt": "Review the file that was just written or edited: $ARGUMENTS. Check for TypeScript violations, architectural placement, React/Express patterns, and test coverage. Fix any issues found and run tests, lint, and build.",
+            "statusMessage": "Running code quality review..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '--- Verify: npm run dev → http://localhost:5173 → check browser console and server terminal ---'"
+          },
+          {
+            "type": "agent",
+            "agent": "ux-ui-specialist",
+            "prompt": "Check git status and diff (git diff HEAD and git status --short) to see if any UI files (*.tsx, *.css, *.scss under client/src/) were modified. If yes, review those files for visual design quality, UX best practices, accessibility, and React component conventions. If no UI files were changed, respond with 'No UI changes to review' and stop.",
+            "statusMessage": "UX/UI specialist reviewing UI changes...",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}
